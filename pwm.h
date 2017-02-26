@@ -8,12 +8,13 @@
 #define PWM_DUTY    .5
 
 #define PWM_FREQ    4000
-#define PWM_RAMP_FREQ   8000
+#define PWM_RAMP_FREQ   500
 
 #define PWM_TOP     F_CPU / 64 / PWM_FREQ
 #define PWM_MATCH   PWM_TOP * PWM_DUTY
 
 #define PWM_RAMP_TOP     F_CPU / 64 / PWM_RAMP_FREQ
+#define PWM_RAMP_VELOCITY   1
 
 void pwm_init(void);
 void set_top(uint16_t x);

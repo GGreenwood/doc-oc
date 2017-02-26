@@ -13,6 +13,7 @@ int main(void)
 
 	// Set output lines
 	SET_BIT(DDR_LED, BIT_LED);
+	SET_BIT(DDR_DEBUG, BIT_DEBUG);
 
     // Set switch as input
     CLEAR_BIT(DDR_SWITCH_1, BIT_SWITCH_1);
@@ -27,21 +28,17 @@ int main(void)
             SET_BIT(PORT_LED, BIT_LED);
             // Check for transition
             if(last_value == 0) {
-                ICR1 = 0;
-                _delay_ms(10);
-                ICR1 = PWM_TOP;
                 TCNT1 = 0;
                 last_value = 1;
+                set_pwm_interrupt(1);
             }
         } else {
             CLEAR_BIT(PORT_LED, BIT_LED);
             // Check for transition
             if(last_value == 1) {
-                ICR1 = 0;
-                _delay_ms(10);
-                ICR1 = PWM_TOP;
                 TCNT1 = 0;
                 last_value = 0;
+                set_pwm_interrupt(1);
             }
         }
 

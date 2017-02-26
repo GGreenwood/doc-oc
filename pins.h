@@ -8,6 +8,11 @@
 #define CLEAR_BIT(TGT, PIN)  do { TGT &= ~(1 << (PIN)); } while(0)
 #define TOGGLE_BIT(TGT, PIN) do { TGT ^=  (1 << (PIN)); } while(0)
 
+#define PORT_DEBUG  PORTB
+#define PIN_DEBUG   PINB
+#define DDR_DEBUG   DDRB
+#define BIT_DEBUG   PB0
+
 #define PORT_LED  PORTB
 #define PIN_LED   PINB
 #define DDR_LED   DDRB
