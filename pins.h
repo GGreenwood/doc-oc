@@ -8,24 +8,44 @@
 #define CLEAR_BIT(TGT, PIN)  do { TGT &= ~(1 << (PIN)); } while(0)
 #define TOGGLE_BIT(TGT, PIN) do { TGT ^=  (1 << (PIN)); } while(0)
 
-#define PORT_DEBUG  PORTB
-#define PIN_DEBUG   PINB
-#define DDR_DEBUG   DDRB
-#define BIT_DEBUG   PB0
+#define PORT_PWM  PORTB
+#define PIN_PWM   PINB
+#define DDR_PWM   DDRB
+#define BIT_PWM   PB1
+
+#define PORT_MOTOR_ENABLE  PORTB
+#define PIN_MOTOR_ENABLE   PINB
+#define DDR_MOTOR_ENABLE   DDRB
+#define BIT_MOTOR_ENABLE   PB2
+
+#define PORT_DIRECTION  PORTB
+#define PIN_DIRECTION   PINB
+#define DDR_DIRECTION   DDRB
+#define BIT_DIRECTION   PB3
+
+#define PORT_RELAY  PORTB
+#define PIN_RELAY   PINB
+#define DDR_RELAY   DDRB
+#define BIT_RELAY   PB4
 
 #define PORT_LED  PORTB
 #define PIN_LED   PINB
 #define DDR_LED   DDRB
 #define BIT_LED   PB5
 
-#define PORT_PWM_1  PORTB
-#define PIN_PWM_1   PINB
-#define DDR_PWM_1   DDRB
-#define BIT_PWM_1   PB1
+#define PORT_UP  PORTC
+#define PIN_UP   PINC
+#define DDR_UP   DDRC
+#define BIT_UP   PC0
 
-#define PORT_SWITCH_1  PORTB
-#define PIN_SWITCH_1   PINB
-#define DDR_SWITCH_1   DDRB
-#define BIT_SWITCH_1   PB4
+#define PORT_DOWN  PORTC
+#define PIN_DOWN   PINC
+#define DDR_DOWN   DDRC
+#define BIT_DOWN   PC1
+
+#define PORT_SAFETY  PORTC
+#define PIN_SAFETY   PINC
+#define DDR_SAFETY   DDRC
+#define BIT_SAFETY   PC2
 
 #endif
