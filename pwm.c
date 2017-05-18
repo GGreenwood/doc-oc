@@ -4,11 +4,11 @@ void pwm_init(void) {
     // Set PWM pin as output
     SET_BIT(DDR_PWM, BIT_PWM);
 
-    // Set up PWM output on DDR_PWM=PB1=OC1A
-    // Fast PWM mode(WGM=1110=14)
+    // Set up PWM output on DDR_PWM=PD6=OC0A
+    // CTC mode
     // Prescaler is set to 16, or 250kHz(4us) per count
-    TCCR1A = (1 << COM1A1) | (1 << WGM11);
-    TCCR1B = (1 << WGM13) | (1 << WGM12) | (1 << CS11) | (1 << CS10);
+    TCCR0A = (1 << COM0A0) | (1 << WGM01);
+    TCCR0B = (1 << CS01);// | (1 << CS00);
 
     // Set initial PWM constants
     set_frequency(4000);
@@ -16,23 +16,30 @@ void pwm_init(void) {
     reset_clock();
 }
 
-// ICR1 is the 16-bit top value
-void set_top(uint16_t x) {
-    ICR1 = x;
+void pwm_enable(void) {
+    TCCR0B = (1 << CS01);// | (1 << CS00);
+}
+void pwm_disable(void) {
+    TCCR0B = 0;
 }
 
-// OCR1A is the 16-bit match value
-void set_match(uint16_t x) {
-    OCR1A = x;
+void set_top(uint8_t x) {
+    OCR0A = x;
 }
+
+/*
+void set_match(uint8_t x) {
+    OCR0A = x;
+}
+*/
 
 void set_frequency(uint16_t x) {
-    set_top(F_CPU / x / 64);
-    set_match(ICR1 / 2);
+    set_top(F_CPU / x / 8 / 2);
+    //set_match(ICR1 / 2);
 }
 
 void reset_clock(void) {
-    TCNT1 = 0;
+    TCNT0 = 0;
 }
 /*
 static int8_t pwm_velocity = PWM_RAMP_VELOCITY;

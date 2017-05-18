@@ -5,8 +5,11 @@
 
 #include "pins.h"
 #include "pwm.h"
+#include "lock_timer.h"
 
-typedef enum {Off, Idle, Up, Down, Lock} State;
+#define LOCK_DELAY 100
+
+typedef enum {Off, Idle, Up, Down} State;
 
 // These are run once during transitions
 void off_transition(State *state) {
@@ -18,7 +21,7 @@ void idle_transition(State *state) {
     SET_BIT(PORT_DIRECTION, BIT_DIRECTION);
     SET_BIT(PORT_RELAY, BIT_RELAY);
     SET_BIT(PORT_MOTOR_ENABLE, BIT_MOTOR_ENABLE);
-    set_frequency(0);
+    pwm_disable();
     reset_clock();
     *state = Idle;
 }
@@ -30,6 +33,7 @@ void up_transition(State *state) {
     SET_BIT(PORT_MOTOR_ENABLE, BIT_MOTOR_ENABLE);
     set_frequency(4000);
     reset_clock();
+    pwm_enable();
     *state = Up;
 }
 
@@ -40,17 +44,21 @@ void down_transition(State *state) {
     SET_BIT(PORT_MOTOR_ENABLE, BIT_MOTOR_ENABLE);
     set_frequency(3000);
     reset_clock();
+    pwm_enable();
     *state = Down;
 }
 
 void lock_transition(State *state) {
+    //Kick off lock delay timer
+    lock_timer_delay(LOCK_DELAY);
+
     CLEAR_BIT(PORT_LED, BIT_LED);
     SET_BIT(PORT_DIRECTION, BIT_DIRECTION);
     CLEAR_BIT(PORT_RELAY, BIT_RELAY);
     CLEAR_BIT(PORT_MOTOR_ENABLE, BIT_MOTOR_ENABLE);
     set_frequency(0);
     reset_clock();
-    *state = Lock;
+    *state = Idle;
 }
 
 int main(void)
@@ -68,11 +76,8 @@ int main(void)
     DDRC = 0x00;
 
     pwm_init();
-
-    // Set up Timer1 to count lock state timings
-    // CTC Mode
-    TCCR0A = (1 << WGM01)
-    //sei();
+    lock_timer_init();
+    sei();
 
     uint8_t up, down, safety;
 
@@ -88,36 +93,32 @@ int main(void)
             case Off:
                 break;
             case Idle:
-                if(up) {
-                    up_transition(&state);
-                } else if(down) {
-                    down_transition(&state);
+                pwm_disable();
+                if(!check_timer()) {
+                    if(up) {
+                        up_transition(&state);
+                    } else if(down) {
+                        down_transition(&state);
+                    } else {
+                        break;
+                    }
                 }
                 break;
             case Up:
+                pwm_enable();
                 if(up) {
                     continue;
-                } else if(down) {
-                    lock_transition(&state);
-                    _delay_ms(500);
-
-                    down_transition(&state);
                 } else {
-                    idle_transition(&state);
+                    lock_transition(&state);
                 }
                 break;
             case Down:
+                pwm_enable();
                 if(down) {
                     continue;
-                } else if(up) {
-                    lock_transition(&state);
-                    _delay_ms(500);
-                    up_transition(&state);
                 } else {
-                    idle_transition(&state);
+                    lock_transition(&state);
                 }
-                break;
-            case Lock:
                 break;
             default:
                 state = Idle;

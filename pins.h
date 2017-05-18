@@ -8,10 +8,10 @@
 #define CLEAR_BIT(TGT, PIN)  do { TGT &= ~(1 << (PIN)); } while(0)
 #define TOGGLE_BIT(TGT, PIN) do { TGT ^=  (1 << (PIN)); } while(0)
 
-#define PORT_PWM  PORTB
-#define PIN_PWM   PINB
-#define DDR_PWM   DDRB
-#define BIT_PWM   PB1
+#define PORT_PWM  PORTD
+#define PIN_PWM   PIND
+#define DDR_PWM   DDRD
+#define BIT_PWM   PD6
 
 #define PORT_MOTOR_ENABLE  PORTB
 #define PIN_MOTOR_ENABLE   PINB
